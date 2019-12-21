@@ -1,4 +1,4 @@
 export interface CommonAPI {
-  innerLength(): number;
-  innerKeys(): string[];
+  innerLength(): Promise<number>;
+  innerKeys(): Promise<string[]>;
 }

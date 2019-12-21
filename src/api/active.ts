@@ -1,4 +1,4 @@
 export interface ActiveAPI {
-  activeKeys(): string[];
-  activeClear(): boolean;
+  activeKeys(): Promise<string[]>;
+  activeClear(): Promise<boolean>;
 }

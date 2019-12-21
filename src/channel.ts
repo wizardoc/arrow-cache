@@ -14,7 +14,15 @@ export interface PendingMessage {
   resolver: (value: unknown) => void;
 }
 
-export class Channel {
+export interface ClientChannel {
+  send<T = unknown>(payload: Message<T>): Promise<T>;
+}
+
+export interface ServerChannel {
+  listen(eventType: string, handler: ListenHandler): void;
+}
+
+export class Channel implements ClientChannel, ServerChannel {
   private store: Worker;
   private msgQueue: PendingMessage[] = [];
   private self: (WorkerGlobalScope & typeof globalThis) | undefined;
@@ -35,7 +43,7 @@ export class Channel {
     }
   }
 
-  unlock(targetType: string, data: unknown) {
+  private unlock(targetType: string, data: unknown) {
     const pos = this.msgQueue.findIndex(
       ({ type }: PendingMessage) => type === targetType
     );
@@ -44,23 +52,13 @@ export class Channel {
     this.msgQueue.splice(pos, 1);
   }
 
-  onMessage = (e: MessageEvent) => {
+  private onMessage = (e: MessageEvent) => {
     const { type, data } = e.data as Message<unknown>;
 
     this.unlock(type, data);
   };
 
-  send<T = unknown>(payload: Message<T>): Promise<T> {
-    return new Promise(resolve => {
-      this.store.postMessage(payload);
-      this.msgQueue.push({
-        type: payload.type,
-        resolver: resolve
-      });
-    });
-  }
-
-  onWebWorkerMessage(msg: Message<unknown>) {
+  private onWebWorkerMessage(msg: Message<unknown>) {
     const listener: Listener | undefined = this.listeners.find(
       ({ eventType }: Listener) => eventType === msg.type
     );
@@ -70,6 +68,16 @@ export class Channel {
         this.self.postMessage({ type: msg.type, data: resData });
       });
     }
+  }
+
+  send<R, T = unknown>(payload: Message<T>): Promise<R> {
+    return new Promise(resolve => {
+      this.store.postMessage(payload);
+      this.msgQueue.push({
+        type: payload.type,
+        resolver: resolve
+      });
+    });
   }
 
   listen(eventType: string, handler: ListenHandler) {

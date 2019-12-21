@@ -1,4 +1,4 @@
 export interface StaticAPI {
-  staticKeys(): string[];
-  staticClear(): boolean;
+  staticKeys(): Promise<string[]>;
+  staticClear(): Promise<boolean>;
 }

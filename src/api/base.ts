@@ -1,12 +1,12 @@
 export interface StorageAPI {
-  setItem(key: string, content: string): boolean;
-  removeItem(key: string): string;
+  setItem(key: string, content: string): Promise<boolean>;
+  removeItem(key: string): Promise<string>;
 }
 
 export interface BaseAPI {
-  markAsActive(key: string): boolean;
-  markAsStatic(key: string): boolean;
-  moveToNextStream(key: string): boolean;
-  updateContent(key: string, content: string): boolean;
-  clear(): boolean;
+  markAsActive(key: string): Promise<boolean>;
+  markAsStatic(key: string): Promise<boolean>;
+  moveToNextStream(key: string): Promise<boolean>;
+  updateContent(key: string, content: string): Promise<boolean>;
+  clear(): Promise<boolean>;
 }

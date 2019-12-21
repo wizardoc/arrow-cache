@@ -1,52 +1,75 @@
 import StoreWorker from "./workers/store.worker.ts";
 import { BaseAPI, StaticAPI, ActiveAPI, StorageAPI } from "./api";
+import { Channel } from "./channel";
+import { Message } from "./dtos";
 
 const DEFAULT_CLEAR_DURATION = 2000;
 
 export class ArrowCache implements BaseAPI, StaticAPI, ActiveAPI, StorageAPI {
   private _clearDuration: number;
-  private cache: 
+  private store: StoreWorker;
+  private channel: Channel;
 
   constructor(clearDuration?: number) {
     this._clearDuration = clearDuration || DEFAULT_CLEAR_DURATION;
+    this.store = new StoreWorker();
+    this.channel = new Channel(this.store);
 
-    new StoreWorker().postMessage;
+    this.init();
   }
 
-  activeKeys(): string[] {
+  async init() {
+    const data = await this.sendMsg({
+      type: "saveData",
+      data: "hello"
+    });
+
+    console.info(data);
+  }
+
+  private sendMsg<T>(msg: Message<T>) {
+    return this.channel.send(msg);
+  }
+
+  activeKeys(): Promise<string[]> {
     throw new Error("Method not implemented.");
   }
-  activeClear(): boolean {
+  activeClear(): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  staticKeys(): string[] {
+  staticKeys(): Promise<string[]> {
     throw new Error("Method not implemented.");
   }
-  staticClear(): boolean {
+  staticClear(): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  setItem(key: string, content: string): boolean {
+  setItem(key: string, content: string): Promise<boolean> {
+    return this.channel.send<boolean>({
+      type: "saveData",
+      data: { key, content }
+    });
+  }
+  removeItem(key: string): Promise<string> {
     throw new Error("Method not implemented.");
   }
-  removeItem(key: string): string {
+  markAsActive(key: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  markAsActive(key: string): boolean {
+  markAsStatic(key: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  markAsStatic(key: string): boolean {
+  moveToNextStream(key: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  moveToNextStream(key: string): boolean {
+  updateContent(key: string, content: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  updateContent(key: string, content: string): boolean {
+  keys(): Promise<string[]> {
     throw new Error("Method not implemented.");
   }
-  keys(): string[] {
-    throw new Error("Method not implemented.");
-  }
-  clear(): boolean {
+  clear(): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 }
+
+const _ = new ArrowCache();
