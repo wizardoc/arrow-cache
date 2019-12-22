@@ -3,6 +3,7 @@ export interface IIceHouse {
   update(key: string, content: string): Promise<void>;
   remove(key: string): Promise<void>;
   find(key: string): Promise<string>;
+  batchAdd(items: ColdDataItem[]): Promise<unknown>;
 }
 
 export interface ColdDataItem {
@@ -88,5 +89,11 @@ export class IceHouse implements IIceHouse {
     const result: ColdDataItem = await this.getResult(coldData.get(key));
 
     return result.content;
+  }
+
+  async batchAdd(items: ColdDataItem[]): Promise<unknown> {
+    const coldData = await this.getObjectStore();
+
+    return Promise.all(items.map(item => this.getResult(coldData.put(item))));
   }
 }
