@@ -6,9 +6,18 @@ import { CacheData } from "../dtos";
 //   self.postMessage({ data: "world", type: data.type });
 // });
 
-const cache = new Cache();
+let cache: Cache;
 const channel = new Channel(undefined, self);
 
-channel.listen("saveData", (data: CacheData, res: Res) =>
-  res(cache.findItem(data.key) || cache.addItem(data.key, data.content))
-);
+channel.listen("init", (data: number, res: Res) => {
+  cache = new Cache(data);
+
+  res(1);
+});
+
+channel.listen("saveData", (data: CacheData, res: Res) => {
+  console.info(data);
+  cache.addItem(data.key, data.content);
+
+  res(1);
+});
