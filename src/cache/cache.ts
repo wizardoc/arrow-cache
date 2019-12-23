@@ -1,5 +1,5 @@
-import { objectMap, objectFilter, omit, findKey } from "../utils";
-import { IceHouse, ColdDataItem, IIceHouse } from "../db";
+import { objectMap, objectFilter, omit } from "../utils";
+import { IceHouse, ColdDataItem } from "../db";
 
 interface ICache {
   addItem(key: string, data: string): boolean;
@@ -31,11 +31,10 @@ type Timeout = number;
 const INIT_LIFECOUNT = 2;
 
 export class Cache implements ICache {
-  public store: Store = {};
-
+  private store: Store = {};
   private currentTimerId: Timeout | undefined;
   private clearDuration: number;
-  private iceHouse: IIceHouse;
+  private iceHouse: IceHouse;
 
   constructor(clearDuration: number) {
     this.iceHouse = new IceHouse();
@@ -92,7 +91,9 @@ export class Cache implements ICache {
     }
 
     // processing imminentDeadItems
-    this.killCache(imminentDeadItems);
+    if (imminentDeadItems.length) {
+      this.killCache(imminentDeadItems);
+    }
   }
 
   private initMonitor() {
@@ -130,10 +131,32 @@ export class Cache implements ICache {
   }
 
   updateItem(key: string, data: string): boolean {
-    throw new Error("Method not implemented.");
+    if (!this.store[key]) {
+      return false;
+    }
+
+    this.store[key].content = data;
   }
 
   findItem(key: string): string | undefined {
-    throw new Error("Method not implemented.");
+    const item = this.store[key];
+
+    if (!item) {
+      return;
+    }
+
+    return this.store[key].content;
+  }
+
+  coldDataKeys(): Promise<string[]> {
+    return this.iceHouse.keys();
+  }
+
+  get keys(): string[] {
+    return Object.keys(this.store);
+  }
+
+  get snapshot(): Store {
+    return this.store;
   }
 }

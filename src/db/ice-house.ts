@@ -96,4 +96,10 @@ export class IceHouse implements IIceHouse {
 
     return Promise.all(items.map(item => this.getResult(coldData.put(item))));
   }
+
+  async keys(): Promise<string[]> {
+    const coldData = await this.getObjectStore();
+
+    return this.getResult(coldData.getAllKeys());
+  }
 }
