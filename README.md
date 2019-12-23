@@ -1,5 +1,5 @@
 <div>
-  <p align="center"><img src="https://github.com/wizaaard/arrow-cache/blob/master/doc/logo.png" alt="fre logo"></p>
+  <p align="center"><img src="https://github.com/wizaaard/arrow-cache/blob/master/doc/logo.png" alt="arrow cache"></p>
 </div>
 <p align="center">
   <img src="https://github.com/wizaaard/arrow-cache/blob/master/doc/text.png" />
