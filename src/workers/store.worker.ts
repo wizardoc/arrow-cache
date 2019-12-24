@@ -1,7 +1,6 @@
 import { Cache } from "../cache/cache";
 import { Channel, Res } from "../channel";
 import { CacheData, KeysTypeData, KeysType, CacheKey } from "../dtos";
-import { IceHouse } from "../db";
 
 let cache: Cache;
 const channel = new Channel(undefined, self);
