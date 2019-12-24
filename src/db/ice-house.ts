@@ -100,6 +100,10 @@ export class IceHouse implements IIceHouse {
     const coldData = await this.getObjectStore();
     const result: ColdDataItem = await this.getResult(coldData.get(key));
 
+    if (!result) {
+      return undefined;
+    }
+
     return result.content;
   }
 
