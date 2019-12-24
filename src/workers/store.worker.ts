@@ -1,13 +1,24 @@
 import { Cache } from "../cache/cache";
 import { Channel, Res } from "../channel";
 import { CacheData, KeysTypeData, KeysType, CacheKey } from "../dtos";
+import { ParsedCacheOptions } from "../main";
 
 let cache: Cache;
 const channel = new Channel(undefined, self);
 
-channel.listen("init", (clearDuration: number, res: Res) => {
-  cache = new Cache(clearDuration);
+channel.listen("init", (cacheOptions: ParsedCacheOptions, res: Res) => {
+  cache = new Cache(cacheOptions.clearDuration);
 
+  res(1);
+});
+
+channel.listen("permanentMemory", (_, res: Res) => {
+  cache.stashStore();
+  res(1);
+});
+
+channel.listen("readAllInMemory", (_, res: Res) => {
+  cache.readAllInMemory();
   res(1);
 });
 

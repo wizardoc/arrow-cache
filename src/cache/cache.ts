@@ -173,6 +173,23 @@ export class Cache implements ICache {
     this.store = {};
   }
 
+  stashStore() {
+    this.iceHouse.batchAdd(
+      this.keys.map(key => ({ key, content: this.store[key].content }))
+    );
+  }
+
+  async readAllInMemory() {
+    const diskAll = ((await this.iceHouse.findAll()) as unknown) as Store;
+
+    this.store = objectMap(diskAll, (item: CacheItem) => ({
+      content: (item as unknown) as string,
+      lifeCount: 2,
+      isActivated: true
+    }));
+    this.iceHouse.clear();
+  }
+
   get keys(): string[] {
     return Object.keys(this.store);
   }
