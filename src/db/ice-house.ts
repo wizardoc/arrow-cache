@@ -1,7 +1,7 @@
 export interface IIceHouse {
   add(key: string, content: string): Promise<void>;
   update(key: string, content: string): Promise<void>;
-  remove(key: string): Promise<void>;
+  remove(key: string): Promise<boolean>;
   find(key: string): Promise<string>;
   batchAdd(items: ColdDataItem[]): Promise<unknown>;
 }
@@ -10,6 +10,14 @@ export interface ColdDataItem {
   key: string;
   content: string;
 }
+
+export interface ObjectifyColdData {
+  [key: string]: string;
+}
+
+export type ParsedAllColdData<T> = T extends true
+  ? ObjectifyColdData
+  : ColdDataItem[];
 
 export class IceHouse implements IIceHouse {
   private initPromise: Promise<IDBDatabase>;
@@ -72,7 +80,11 @@ export class IceHouse implements IIceHouse {
     }
   }
 
-  async remove(key: string): Promise<void> {
+  async remove(key: string): Promise<boolean> {
+    if (!(await this.keys()).includes(key)) {
+      return false;
+    }
+
     const coldData = await this.getObjectStore();
 
     return this.getResult(coldData.delete(key));
@@ -84,7 +96,7 @@ export class IceHouse implements IIceHouse {
     return this.getResult(coldData.put({ content, key }));
   }
 
-  async find(key: string): Promise<string> {
+  async find(key: string): Promise<string | undefined> {
     const coldData = await this.getObjectStore();
     const result: ColdDataItem = await this.getResult(coldData.get(key));
 
@@ -101,5 +113,38 @@ export class IceHouse implements IIceHouse {
     const coldData = await this.getObjectStore();
 
     return this.getResult(coldData.getAllKeys());
+  }
+
+  async findOnce(key: string): Promise<string | undefined> {
+    let result: string | undefined;
+
+    if ((await this.keys()).includes(key)) {
+      result = await this.find(key);
+      this.remove(key);
+    }
+
+    return result;
+  }
+
+  async clear(): Promise<void> {
+    const coldData = await this.getObjectStore();
+
+    return this.getResult(coldData.clear());
+  }
+
+  async findAll(isObjectify?: true): Promise<ObjectifyColdData>;
+  async findAll(isObjectify?: false): Promise<ColdDataItem[]>;
+  async findAll(
+    isObjectify?: boolean
+  ): Promise<ColdDataItem[] | ObjectifyColdData> {
+    const coldData = await this.getObjectStore();
+    const result = await this.getResult<ColdDataItem[]>(coldData.getAll());
+
+    return isObjectify || true
+      ? result.reduce(
+          (total, cur) => (total[cur.key] = cur.content) && total,
+          {}
+        )
+      : result;
   }
 }

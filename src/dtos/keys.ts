@@ -1,6 +1,7 @@
 export const enum KeysType {
   STATIC,
-  ACTIVE
+  ACTIVE,
+  ALL
 }
 
 export interface KeysTypeData {

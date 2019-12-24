@@ -1,5 +1,5 @@
 import { objectMap, objectFilter, omit } from "../utils";
-import { IceHouse, ColdDataItem } from "../db";
+import { IceHouse, ColdDataItem, ParsedAllColdData } from "../db";
 
 interface ICache {
   addItem(key: string, data: string): boolean;
@@ -22,8 +22,13 @@ interface CacheItem {
   imminentDead?: boolean;
 }
 
-interface Store {
+export interface Store {
   [key: string]: CacheItem;
+}
+
+export interface Snapshot<T extends boolean> {
+  memory: Store;
+  disk: ParsedAllColdData<T>;
 }
 
 type Timeout = number;
@@ -34,10 +39,10 @@ export class Cache implements ICache {
   private store: Store = {};
   private currentTimerId: Timeout | undefined;
   private clearDuration: number;
-  private iceHouse: IceHouse;
+  private _iceHouse: IceHouse;
 
   constructor(clearDuration: number) {
-    this.iceHouse = new IceHouse();
+    this._iceHouse = new IceHouse();
     this.clearDuration = clearDuration;
     // create a timer for monitor lifeCount and clear the cache block that's dead
     this.initMonitor();
@@ -66,7 +71,7 @@ export class Cache implements ICache {
       imminentDead: val.lifeCount - 1 === 0
     }));
 
-    for (const key of Object.keys(this.store)) {
+    for (const key of this.keys) {
       const item = this.store[key];
 
       if (this.store[key].imminentDead) {
@@ -84,7 +89,7 @@ export class Cache implements ICache {
     );
 
     // stop timer when there's nothing in store
-    if (!Object.keys(this.store).length) {
+    if (!this.keys.length) {
       clearInterval(this.currentTimerId);
 
       this.currentTimerId = undefined;
@@ -148,15 +153,38 @@ export class Cache implements ICache {
     return this.store[key].content;
   }
 
+  findOnce(key: string): string | undefined {
+    const item = this.findItem(key);
+
+    this.removeItem(key);
+
+    return item;
+  }
+
   coldDataKeys(): Promise<string[]> {
     return this.iceHouse.keys();
+  }
+
+  extendingCacheLife(key: string) {
+    this.store[key].lifeCount++;
+  }
+
+  clear() {
+    this.store = {};
   }
 
   get keys(): string[] {
     return Object.keys(this.store);
   }
 
-  get snapshot(): Store {
-    return this.store;
+  async snapshot(): Promise<Snapshot<true>> {
+    return {
+      memory: this.store,
+      disk: await this.iceHouse.findAll()
+    };
+  }
+
+  get iceHouse(): IceHouse {
+    return this._iceHouse;
   }
 }

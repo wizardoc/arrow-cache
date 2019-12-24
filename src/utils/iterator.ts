@@ -33,7 +33,7 @@ export function objectFilter<T extends BaseObject<T[P]>, P extends keyof T>(
 
 export function omit<T extends object, P extends keyof T>(obj: T, prop: P): T {
   return Object.keys(obj).reduce(
-    (total, key) => key !== prop && (total[key] = obj[prop]) && total,
+    (total, key) => (key !== prop && (total[key] = obj[key]) && total) || total,
     {}
   ) as T;
 }
