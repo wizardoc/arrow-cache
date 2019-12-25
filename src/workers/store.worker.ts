@@ -17,8 +17,8 @@ channel.listen("permanentMemory", (_, res: Res) => {
   res(1);
 });
 
-channel.listen("readAllInMemory", (_, res: Res) => {
-  cache.readAllInMemory();
+channel.listen("readAllInMemory", async (_, res: Res) => {
+  await cache.readAllInMemory();
   res(1);
 });
 

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6",
+    "rootDir": ".",
+    "outDir": "dist",
+    "lib": ["DOM", "ESNext", "WebWorker"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": true
+  },
+  "include": ["."],
+  "exclude": ["node_modules"]
+}

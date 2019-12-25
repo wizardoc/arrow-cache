@@ -1,26 +1,48 @@
 import StoreWorker from "./workers/store.worker.ts";
-import { BaseAPI, StaticAPI, ActiveAPI, StorageAPI } from "./api";
 import { Channel } from "./channel";
-import { Message, KeysTypeData, KeysType, CacheData, CacheKey } from "./dtos";
+import { KeysTypeData, KeysType, CacheData, CacheKey } from "./dtos";
 import { Snapshot } from "./cache/cache";
 
-const DEFAULT_CLEAR_DURATION = 2000;
+export interface ParsedCacheItemOptions {
+  isOnlyMemory: boolean;
+  isAlwaysActive: boolean;
+}
 
-export class ArrowCache implements BaseAPI, StaticAPI, ActiveAPI, StorageAPI {
-  private _clearDuration: number;
+export interface ParsedCacheOptions {
+  isPermanentMemory: boolean;
+  clearDuration: number;
+}
+
+export type CacheOptions = Partial<ParsedCacheOptions>;
+export type CacheItemOptions = Partial<ParsedCacheItemOptions>;
+
+export class ArrowCache {
   private store: StoreWorker;
   private channel: Channel;
+  private cacheOptions: ParsedCacheOptions;
+  private initPromise: Promise<undefined>;
 
-  constructor(clearDuration?: number) {
-    this._clearDuration = clearDuration || DEFAULT_CLEAR_DURATION;
+  constructor(options?: CacheOptions) {
     this.store = new StoreWorker();
     this.channel = new Channel(this.store);
+    this.cacheOptions = this.parseCacheOptions(options);
 
-    this.init();
+    this.initPromise = new Promise(resolve => this.init(resolve));
   }
 
-  init() {
-    this.sendMsg("init", this._clearDuration);
+  InitSuccess() {
+    return this.initPromise;
+  }
+
+  async init(resolve: () => void) {
+    this.sendMsg("init", this.cacheOptions);
+
+    if (this.cacheOptions.isPermanentMemory) {
+      await this.sendMsg("readAllInMemory");
+      window.onunload = () => this.sendMsg("permanentMemory");
+
+      resolve();
+    }
   }
 
   private sendMsg<R, T = unknown>(type: string, data?: T): Promise<R> {
@@ -28,6 +50,35 @@ export class ArrowCache implements BaseAPI, StaticAPI, ActiveAPI, StorageAPI {
       type,
       data: data || {}
     });
+  }
+
+  private parseOptions<T extends object>(defaultOptions: T, options: T) {
+    return {
+      ...defaultOptions,
+      ...(options || {})
+    };
+  }
+
+  private parseCacheOptions(options: CacheOptions): ParsedCacheOptions {
+    return this.parseOptions(
+      {
+        isPermanentMemory: false,
+        clearDuration: 20000
+      },
+      options
+    ) as ParsedCacheOptions;
+  }
+
+  private parseCacheItemOptions(
+    options: CacheItemOptions
+  ): ParsedCacheItemOptions {
+    return this.parseOptions(
+      {
+        isOnlyMemory: false,
+        isAlwaysActive: false
+      },
+      options
+    ) as ParsedCacheItemOptions;
   }
 
   /**
@@ -97,7 +148,11 @@ export class ArrowCache implements BaseAPI, StaticAPI, ActiveAPI, StorageAPI {
    * otherwise, arrow-cache will read the cache block into memory and update content
    * of the cache block.
    */
-  setItem(key: string, content: string): Promise<boolean> {
+  setItem(
+    key: string,
+    content: string,
+    options?: CacheItemOptions
+  ): Promise<boolean> {
     return this.sendMsg("saveData", { key, content });
   }
   /**
@@ -135,16 +190,21 @@ export class ArrowCache implements BaseAPI, StaticAPI, ActiveAPI, StorageAPI {
   }
 }
 
-const ac = new ArrowCache();
+const ac = new ArrowCache({ isPermanentMemory: true });
 
 (async () => {
-  await ac.setItem("name", "zhangsan");
-  await ac.markAsStatic("name");
-  console.info(await ac.getItem("name"));
-  await ac.setItem("age", "19");
-  await ac.markAsStatic("age");
-  await ac.setItem("height", "175cm");
-  await ac.markAsStatic("height");
-
+  // setInterval(async () => {
+  //   ac.setItem("count", `${+(await ac.getItem("count")) + 1}`);
+  //   console.info(await ac.getItem("count"));
+  // }, 500);
+  // await ac.setItem("name", "zhangsan");
+  // await ac.markAsStatic("name");
+  // console.info(await ac.getItem("name"));
+  // await ac.setItem("age", "19");
+  // await ac.markAsStatic("age");
+  // await ac.setItem("height", "175cm");
+  // await ac.markAsStatic("height");
+  // ac.setItem("count", "1");
+  await ac.InitSuccess();
   console.info(await ac.snapshot());
 })();

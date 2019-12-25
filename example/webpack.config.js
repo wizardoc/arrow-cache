@@ -2,13 +2,11 @@ const Path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./src/main.ts",
+  entry: "./main.ts",
   output: {
     path: Path.resolve("./dist"),
-    filename: "main.js",
-    globalObject: "this",
-    library: "ArrowCache",
-    libraryTarget: "umd"
+    filename: "[name].[hash].js",
+    globalObject: "this"
   },
   resolve: {
     extensions: [".ts", ".js"]
@@ -45,7 +43,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: Path.resolve("./public/index.html")
+      template: Path.resolve("./index.html")
     })
   ]
 };
