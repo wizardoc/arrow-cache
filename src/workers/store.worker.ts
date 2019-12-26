@@ -7,7 +7,7 @@ let cache: Cache;
 const channel = new Channel(undefined, self);
 
 channel.listen("init", (cacheOptions: ParsedCacheOptions, res: Res) => {
-  cache = new Cache(cacheOptions.clearDuration);
+  cache = new Cache(cacheOptions);
 
   res(1);
 });
@@ -126,7 +126,7 @@ channel.listen(
 
 channel.listen("snapshot", async (_, res: Res) => res(await cache.snapshot()));
 
-channel.listen("getItem", async ({ key }: CacheKey, res: Res) => {
+channel.listen("getItem", async ({ key, content }: CacheData, res: Res) => {
   const memoryItem = cache.findItem(key);
 
   if (memoryItem) {
@@ -136,6 +136,13 @@ channel.listen("getItem", async ({ key }: CacheKey, res: Res) => {
   const diskItem = await cache.iceHouse.find(key);
 
   if (!diskItem) {
+    // write the default value into memory
+    if (content) {
+      cache.addItem(key, content);
+
+      return res(content);
+    }
+
     return res(undefined);
   }
 

@@ -1,5 +1,6 @@
 import { objectMap, objectFilter, omit } from "../utils";
 import { IceHouse, ColdDataItem, ParsedAllColdData } from "../db";
+import { ParsedCacheOptions } from "../main";
 
 interface ICache {
   addItem(key: string, data: string): boolean;
@@ -40,10 +41,12 @@ export class Cache implements ICache {
   private currentTimerId: Timeout | undefined;
   private clearDuration: number;
   private _iceHouse: IceHouse;
+  private isPermanentMemory: boolean;
 
-  constructor(clearDuration: number) {
+  constructor(options: ParsedCacheOptions) {
     this._iceHouse = new IceHouse();
-    this.clearDuration = clearDuration;
+    this.clearDuration = options.clearDuration;
+    this.isPermanentMemory = options.isPermanentMemory;
     // create a timer for monitor lifeCount and clear the cache block that's dead
     this.initMonitor();
   }
@@ -114,6 +117,10 @@ export class Cache implements ICache {
       lifeCount: INIT_LIFECOUNT,
       isActivated: true
     };
+
+    if (this.isPermanentMemory) {
+      this.iceHouse.add(key, data);
+    }
 
     // addItem will add item to the store
     // create a timer when current timer is destroy
@@ -187,7 +194,7 @@ export class Cache implements ICache {
       lifeCount: 2,
       isActivated: true
     }));
-    this.iceHouse.clear();
+    // this.iceHouse.clear();
   }
 
   get keys(): string[] {

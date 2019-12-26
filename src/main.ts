@@ -16,6 +16,8 @@ export interface ParsedCacheOptions {
 export type CacheOptions = Partial<ParsedCacheOptions>;
 export type CacheItemOptions = Partial<ParsedCacheItemOptions>;
 
+type AllowStorageTypes = boolean | string | number | object | Array<unknown>;
+
 export class ArrowCache {
   private store: StoreWorker;
   private channel: Channel;
@@ -39,7 +41,6 @@ export class ArrowCache {
 
     if (this.cacheOptions.isPermanentMemory) {
       await this.sendMsg("readAllInMemory");
-      window.onunload = () => this.sendMsg("permanentMemory");
 
       resolve();
     }
@@ -150,16 +151,36 @@ export class ArrowCache {
    */
   setItem(
     key: string,
-    content: string,
+    content: AllowStorageTypes,
     options?: CacheItemOptions
   ): Promise<boolean> {
-    return this.sendMsg("saveData", { key, content });
+    return this.sendMsg("saveData", {
+      key,
+      content: JSON.stringify(content),
+      options: this.parseCacheItemOptions(options)
+    });
   }
   /**
    * get cache block from memory or disk
    */
-  getItem(key: string): Promise<string | undefined> {
-    return this.sendMsg("getItem", { key });
+  async getItem<T extends AllowStorageTypes>(
+    key: string,
+    defaultValue?: AllowStorageTypes
+  ): Promise<T | undefined> {
+    const content: string = await this.sendMsg("getItem", {
+      key,
+      content: defaultValue
+    });
+    let result: AllowStorageTypes;
+
+    try {
+      result = JSON.parse(content);
+      console.info(result);
+    } catch (e) {
+      result = content;
+    }
+
+    return result as T;
   }
   /**
    * remove the cache block of key from memory or disk
@@ -189,22 +210,3 @@ export class ArrowCache {
     return this.sendMsg("snapshot");
   }
 }
-
-const ac = new ArrowCache({ isPermanentMemory: true });
-
-(async () => {
-  // setInterval(async () => {
-  //   ac.setItem("count", `${+(await ac.getItem("count")) + 1}`);
-  //   console.info(await ac.getItem("count"));
-  // }, 500);
-  // await ac.setItem("name", "zhangsan");
-  // await ac.markAsStatic("name");
-  // console.info(await ac.getItem("name"));
-  // await ac.setItem("age", "19");
-  // await ac.markAsStatic("age");
-  // await ac.setItem("height", "175cm");
-  // await ac.markAsStatic("height");
-  // ac.setItem("count", "1");
-  await ac.InitSuccess();
-  console.info(await ac.snapshot());
-})();
