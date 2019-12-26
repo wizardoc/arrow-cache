@@ -21,21 +21,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.worker\.ts$/,
-        use: [
-          {
-            loader: "worker-loader",
-            options: {
-              name: "[name]:[hash].js",
-              inline: true
-            }
-          },
-          {
-            loader: "awesome-typescript-loader"
-          }
-        ]
-      },
-      {
         test: /\.ts$/,
         use: "awesome-typescript-loader"
       }
