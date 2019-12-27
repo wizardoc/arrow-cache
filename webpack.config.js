@@ -1,8 +1,8 @@
 const Path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: "./src/main.ts",
+  mode: "production",
   output: {
     path: Path.resolve("./dist"),
     filename: "main.js",
@@ -12,13 +12,6 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".js"]
-  },
-  devServer: {
-    contentBase: "./dist",
-    host: "0.0.0.0",
-    inline: true,
-    compress: true,
-    port: 9999
   },
   module: {
     rules: [
@@ -42,10 +35,5 @@ module.exports = {
         use: "awesome-typescript-loader"
       }
     ]
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: Path.resolve("./public/index.html")
-    })
-  ]
+  }
 };
