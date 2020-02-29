@@ -1,6 +1,6 @@
 {
   "name": "arrow-cache",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "./dist/main.js",
   "license": "MIT",
   "files": [
