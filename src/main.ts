@@ -161,8 +161,40 @@ export class ArrowCache {
     });
   }
   /**
+   * append a new value to an existing cacheItem
+   */
+  async append<T extends AllowStorageTypes>(
+    key: string,
+    cb: (data: T) => T,
+    defaultValue: T
+  ): Promise<T>;
+  async append<T extends AllowStorageTypes>(
+    key: string,
+    cb: (data: T | undefined) => T,
+    defaultValue?: T | undefined
+  ): Promise<T>;
+  async append<T extends AllowStorageTypes>(
+    key: string,
+    cb: (data: T | undefined) => T,
+    defaultValue: T | undefined
+  ): Promise<T> {
+    const val = await this.getItem(key, defaultValue);
+    const appendVal = cb(val as any);
+
+    this.setItem(key, appendVal);
+
+    return appendVal;
+  }
+  /**
    * get cache block from memory or disk
    */
+  async getItem<T extends AllowStorageTypes>(
+    key: string,
+    defaultValue: AllowStorageTypes
+  ): Promise<T>;
+  async getItem<T extends AllowStorageTypes>(
+    key: string
+  ): Promise<T | undefined>;
   async getItem<T extends AllowStorageTypes>(
     key: string,
     defaultValue?: AllowStorageTypes
@@ -175,7 +207,6 @@ export class ArrowCache {
 
     try {
       result = JSON.parse(content);
-      console.info(result);
     } catch (e) {
       result = content;
     }
