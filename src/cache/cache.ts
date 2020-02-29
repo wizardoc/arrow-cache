@@ -6,7 +6,7 @@ interface ICache {
   addItem(key: string, data: string): boolean;
   removeItem(key: string): boolean;
   updateItem(key: string, data: string): boolean;
-  findItem(key: string): string;
+  findItem(key: string): string | undefined;
 }
 
 /**

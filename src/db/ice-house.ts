@@ -2,7 +2,7 @@ export interface IIceHouse {
   add(key: string, content: string): Promise<void>;
   update(key: string, content: string): Promise<void>;
   remove(key: string): Promise<boolean>;
-  find(key: string): Promise<string>;
+  find(key: string): Promise<string | undefined>;
   batchAdd(items: ColdDataItem[]): Promise<unknown>;
 }
 
