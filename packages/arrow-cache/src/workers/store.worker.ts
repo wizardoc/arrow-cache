@@ -1,7 +1,7 @@
 import { Cache } from "../cache/cache";
 import { CacheData, KeysTypeData, KeysType, CacheKey } from "../dtos";
 import { ParsedCacheOptions } from "../main";
-import { ServerChannel, Res } from "../server-channel";
+import { ServerChannel, Res } from "@arrow-cache/channel";
 
 let cache: Cache;
 const channel = new ServerChannel(self);

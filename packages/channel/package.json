@@ -1,0 +1,9 @@
+{
+  "name": "@arrow-cache/channel",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "compile": "rimraf ./dist && tsc"
+  }
+}

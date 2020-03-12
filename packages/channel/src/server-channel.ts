@@ -1,4 +1,4 @@
-import { Message } from "./dtos";
+import { Message } from "./channle-message";
 
 export type Res = (resData: unknown) => void;
 

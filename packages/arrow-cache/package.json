@@ -1,0 +1,30 @@
+{
+  "name": "arrow-cache",
+  "version": "1.0.4",
+  "main": "./dist/main.js",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "compile": "rimraf ./dist && tsc",
+    "start": "webpack --mode=development",
+    "dev": "webpack-dev-server --mode=production",
+    "bootstrap": "lerna bootstrap"
+  },
+  "browserslist": [
+    "last 1 Chrome versions"
+  ],
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "html-webpack-plugin": "^3.2.0",
+    "typescript": "^3.7.3",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "dependencies": {
+    "@arrow-cache/channel": "^1.0.0",
+    "worker-loader": "^2.0.0"
+  }
+}

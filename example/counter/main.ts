@@ -1,4 +1,6 @@
-import { ArrowCache } from "../..";
+import { ArrowCache } from "../../packages/arrow-cache";
+
+console.info(ArrowCache);
 
 const cache = new ArrowCache({ isPermanentMemory: true });
 
