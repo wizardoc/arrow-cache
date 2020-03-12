@@ -6,3 +6,6 @@ dist
 
 # deps
 node_modules
+
+# parcel cache
+.cache
