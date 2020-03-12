@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES5",
-    "rootDir": ".",
+    "target": "ES6",
+    "rootDir": "src",
     "outDir": "dist",
     "lib": ["DOM", "ESNext", "WebWorker"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "strict": true,
+    "noImplicitAny": true
   },
-  "include": ["."],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
