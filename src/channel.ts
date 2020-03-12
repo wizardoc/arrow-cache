@@ -1,5 +1,4 @@
 import { Message } from "./dtos";
-import { resolve } from "dns";
 
 export type Res = (resData: unknown) => void;
 type ListenHandler = (data: unknown | undefined, res: Res) => void;

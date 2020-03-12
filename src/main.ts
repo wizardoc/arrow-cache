@@ -4,26 +4,39 @@ import { KeysTypeData, KeysType, CacheData, CacheKey } from "./dtos";
 import { Snapshot } from "./cache/cache";
 
 export interface ParsedCacheItemOptions {
-  // when lifeCount of the cacheItem is 0, it will be written in disk,
-  // therefore if you want keep this item always in memory, you have to set isOnlyMemory to TRUE
-  // the cache item will always exist in memory when isOnlyMemory is TRUE
+  /**
+   * when lifeCount of the cacheItem is 0, it will be written in disk,
+   * therefore if you want keep this item always in memory, you have to set isOnlyMemory to TRUE
+   * the cache item will always exist in memory when isOnlyMemory is TRUE
+   */
   isOnlyMemory: boolean;
-  // please noted that is same like isOnlyMemory, but there are some subtle difference between them.
-  // the cacheItem will not be mark to cold data if it's lifeCount is 0 when isAlwaysActive is TRUE
+  /**
+   * please noted that is same like isOnlyMemory, but there are some subtle difference between them.
+   * the cacheItem will not be mark to cold data if it's lifeCount is 0 when isAlwaysActive is TRUE
+   */
   isAlwaysActive: boolean;
 }
 
 export interface ParsedCacheOptions {
-  // if isPermanentMemory is TRUE, setItem will written cache data in disk, the cacheItem will not be
-  // recycling when refresh the page
+  /**
+   * if isPermanentMemory is TRUE, setItem will written cache data in disk, the cacheItem will not be
+   * recycling when refresh the page
+   */
   isPermanentMemory: boolean;
-  // time duration to clear cold data
+  /**
+   * time duration to clear cold data
+   */
   clearDuration: number;
 }
 
 export type CacheOptions = Partial<ParsedCacheOptions>;
 export type CacheItemOptions = Partial<ParsedCacheItemOptions>;
 
+/**
+ * the types of data allow to be stored.
+ * if the type of cacheData is not exist in AllowStorageTypes,
+ * you must transfer the type to string manually.
+ */
 type AllowStorageTypes = boolean | string | number | object | Array<unknown>;
 
 export class ArrowCache {
