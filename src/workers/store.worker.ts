@@ -1,10 +1,10 @@
 import { Cache } from "../cache/cache";
-import { Channel, Res } from "../channel";
 import { CacheData, KeysTypeData, KeysType, CacheKey } from "../dtos";
 import { ParsedCacheOptions } from "../main";
+import { ServerChannel, Res } from "../server-channel";
 
 let cache: Cache;
-const channel = new Channel(undefined, self);
+const channel = new ServerChannel(self);
 
 channel.listen("init", (cacheOptions: ParsedCacheOptions, res: Res) => {
   cache = new Cache(cacheOptions);
@@ -52,6 +52,10 @@ channel.listen("moveToNextStream", async ({ key }: CacheKey, res: Res) => {
   if (!cache.findItem(key)) {
     const block = await cache.iceHouse.findOnce(key);
 
+    if (!block) {
+      throw new Error(`Cannot find cache item by ${key}`);
+    }
+
     cache.addItem(key, block);
 
     return res(false);
@@ -96,7 +100,11 @@ channel.listen("clear", ({ type }: KeysTypeData, res: Res) => {
 channel.listen(
   "mark",
   async ({ type, key }: KeysTypeData & CacheKey, res: Res) => {
-    const MARK_HANDLER_DISPATCHER = {
+    type MarkHandlerDispatcher = {
+      [type in KeysType]: () => Promise<boolean> | boolean;
+    };
+
+    const MARK_HANDLER_DISPATCHER: Partial<MarkHandlerDispatcher> = {
       [KeysType.STATIC]: () => {
         const content = cache.findOnce(key);
 
@@ -120,7 +128,7 @@ channel.listen(
       }
     };
 
-    res(await MARK_HANDLER_DISPATCHER[type]());
+    res(await MARK_HANDLER_DISPATCHER[type]!());
   }
 );
 

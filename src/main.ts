@@ -1,7 +1,7 @@
 import StoreWorker from "./workers/store.worker.ts";
-import { Channel } from "./channel";
 import { KeysTypeData, KeysType, CacheData, CacheKey } from "./dtos";
 import { Snapshot } from "./cache/cache";
+import { ClientChannel } from "./client-channel";
 
 export interface ParsedCacheItemOptions {
   /**
@@ -41,14 +41,14 @@ type AllowStorageTypes = boolean | string | number | object | Array<unknown>;
 
 export class ArrowCache {
   private store: StoreWorker;
-  private channel: Channel;
+  private channel: ClientChannel;
   private cacheOptions: ParsedCacheOptions;
   private initPromise: Promise<undefined>;
 
   constructor(options?: CacheOptions) {
     this.store = new StoreWorker();
-    this.channel = new Channel(this.store);
-    this.cacheOptions = this.parseCacheOptions(options);
+    this.channel = new ClientChannel(this.store);
+    this.cacheOptions = this.parseCacheOptions(options ?? {});
 
     this.initPromise = new Promise(resolve => this.init(resolve));
   }
@@ -70,14 +70,14 @@ export class ArrowCache {
   private sendMsg<R, T = unknown>(type: string, data?: T): Promise<R> {
     return this.channel.send({
       type,
-      data: data || {}
+      data: data ?? {}
     });
   }
 
   private parseOptions<T extends object>(defaultOptions: T, options: T) {
     return {
       ...defaultOptions,
-      ...(options || {})
+      ...(options ?? {})
     };
   }
 
@@ -178,7 +178,7 @@ export class ArrowCache {
     return this.sendMsg("saveData", {
       key,
       content: JSON.stringify(content),
-      options: this.parseCacheItemOptions(options)
+      options: this.parseCacheItemOptions(options ?? {})
     });
   }
   /**
@@ -199,7 +199,7 @@ export class ArrowCache {
     cb: (data: T | undefined) => T,
     defaultValue: T | undefined
   ): Promise<T> {
-    const val = await this.getItem(key, defaultValue);
+    const val = await this.getItem(key, defaultValue as T);
     const appendVal = cb(val as any);
 
     this.setItem(key, appendVal);
