@@ -4,11 +4,12 @@
     "target": "ES5",
     "rootDir": ".",
     "outDir": "dist",
-    "lib": ["DOM", "ESNext", "WebWorker"],
+    "jsx": "react",
+    "lib": ["DOM"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "declaration": true
   },
-  "include": ["."],
+  "include": ["./**/*"],
   "exclude": ["node_modules"]
 }

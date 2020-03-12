@@ -8,9 +8,7 @@
   ],
   "scripts": {
     "compile": "rimraf ./dist && tsc",
-    "start": "webpack --mode=development",
-    "dev": "webpack-dev-server --mode=production",
-    "bootstrap": "lerna bootstrap"
+    "build": "webpack --mode=development"
   },
   "browserslist": [
     "last 1 Chrome versions"

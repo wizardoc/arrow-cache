@@ -145,7 +145,7 @@ channel.listen("getItem", async ({ key, content }: CacheData, res: Res) => {
 
   if (!diskItem) {
     // write the default value into memory
-    if (content) {
+    if (content !== undefined) {
       cache.addItem(key, content);
 
       return res(content);
