@@ -3,8 +3,8 @@
     "module": "commonjs",
     "target": "ES5",
     "rootDir": "src",
-    "outDir": "src/dist",
-    "lib": ["DOM", "ESNext", "WebWorker"],
+    "outDir": "dist",
+    "lib": ["ESNext", "WebWorker"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "declaration": true
