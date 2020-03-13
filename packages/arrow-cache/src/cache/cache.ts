@@ -203,8 +203,8 @@ export class Cache implements ICache {
 
   async snapshot(): Promise<Snapshot<true>> {
     return {
-      memory: this.store,
-      disk: await this.iceHouse.findAll()
+      memory: {...this.store},
+      disk: {...(await this.iceHouse.findAll())}
     };
   }
 

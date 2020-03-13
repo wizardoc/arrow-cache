@@ -1,8 +1,8 @@
 import React, { useLayoutEffect, useState } from "react";
 import { render } from "react-dom";
 import { ArrowCache } from "arrow-cache";
-import { Container, Button, Count } from "./styles";
-import { Logo, Global } from "../common";
+import { Count } from "./styles";
+import { Logo, Global, Button, Container } from "../common";
 
 const cache = new ArrowCache({
   isPermanentMemory: true

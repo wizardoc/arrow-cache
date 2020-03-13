@@ -93,7 +93,7 @@ export class IceHouse implements IIceHouse {
   async update(key: string, content: string): Promise<void> {
     const coldData = await this.getObjectStore();
 
-    return this.getResult(coldData.put({ content, key }));
+    return this.getResult(coldData.put({ key, content }));
   }
 
   async find(key: string): Promise<string | undefined> {

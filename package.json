@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn workspace channel compile && yarn workspace arrow-cache build",
+    "build": "yarn workspace @arrow-cache/channel compile && yarn workspace arrow-cache build",
     "bootstrap": "lerna bootstrap"
   },
   "devDependencies": {

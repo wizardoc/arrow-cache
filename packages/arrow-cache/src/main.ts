@@ -53,10 +53,6 @@ export class ArrowCache {
     this.initPromise = new Promise(resolve => this.init(resolve));
   }
 
-  InitSuccess() {
-    return this.initPromise;
-  }
-
   async init(resolve: () => void) {
     this.sendMsg("init", this.cacheOptions);
 
@@ -254,8 +250,11 @@ export class ArrowCache {
    * updateContent is a idempotent method that will update content of key.
    * if the cache block is exist in icehouse, updateContent does not make it as active.
    */
-  updateContent(key: string, content: string): Promise<boolean> {
-    return this.sendMsg<boolean, CacheData>("updateContent", { key, content });
+  updateContent(key: string, content: AllowStorageTypes): Promise<boolean> {
+    return this.sendMsg<boolean, CacheData>("updateContent", {
+      key,
+      content: JSON.stringify(content)
+    });
   }
 
   snapshot(): Promise<Snapshot<true>> {
