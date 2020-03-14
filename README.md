@@ -155,19 +155,19 @@ We provide three APIs to help you control life-circle of cache item.
 moveToNextStream(key: string): Promise<boolean>
 ```
 
-`moveToNextStream` 能够让指定的 key 对应的缓存项进入下一个清理周期。lifeCount 是影响缓存项是否活跃的唯一指标，lifeCount 会加一，随之进入下一个清理周期。如果 key 对应的缓存项不存在，则会返回 false。
+`moveToNextStream` can move cache item of key to next clear-circle. `lifeCount` is the only factor that influence whether the cache item is active. `moveToNextStream` will cause `lifeCount` of the item + 1 and move it to next clear-circle. But if `moveToNextStream` return false indicate that the item of key does not exist.
 
 ```typescript
 markAsActive(key: string): Promise<boolean>
 ```
 
-`markAsActive` 帮助对应的缓存项从硬盘读入内存。如果 key 对应的缓存项不存在，则会返回 false。
+`markAsActive` can read the item of key in memory, the method will return false when the item of key does not exist.
 
 ```typescript
 markAsStatic(key: string): Promise<boolean>
 ```
 
-`markAsStatic` 会让对应的缓存项从内存写到硬盘。如果 key 对应的缓存项不存在，则会返回 false。
+`markAsStatic` can write the item of ket on the disk, the method will return false when the item of key does not exist.
 
 ## Keys
 
