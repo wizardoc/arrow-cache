@@ -10,39 +10,39 @@
   <img src="https://img.shields.io/badge/language-Chinese-red.svg?style=flat-square">
 </p>
 
-English | [中文文档](doc/README-zh.md)
+[English](/README.md) | 中文文档
 
 # Arrow Cache
 
-Cache mechanism base on Web Worker, help us build high performance `webApp`.
+基于 `WebWorker` 的缓存机制，提供可靠高性能的缓存，帮助构建高性能的 `webApp`。
 
-## TL;DR
+## 特性
 
-👋 Type-Safer. `Arrow Cache` is written in TypeScript and good support for code hints and type constraints.
+👋 类型安全，arrow Cache 用 ts 编写，对代码提示和类型约束有良好的支持。
 
-🚀 High performance. all operations on cache library is asynchronous, the reason is that behind it is Worker Thread that handle all the storage access operations.
+🚀 高性能，对缓存库的操作都是异步的，背后是 Worker thread 在帮忙处理一切的存取操作。
 
-🍰 Less memory. the cache items filter by simple and effective algorithm to ensure the proportion of hot data in memory.
+🍰 控制内存，通过简单有效的算法筛选数据，保证内存中热数据缓存的占比。
 
-🍷 Rich API. provide a series methods for manipulate the cache store to control the life-circle of cache item effective.
+🍷 丰富的 API 对缓存的可控性，提供一系列操作缓存的细粒度的方法，能更有效的控制缓存的生命周期。
 
-🌲Data persistence. `Arrow Cache` will remove it and from memory and persist it to disk if it's lifeCount eq to 0.If I access it again, it will be read in memory to improve speed for next access.
+🌲 数据持久化，对于冷数据会被 arrow cache 从内存中移除持久化到硬盘，有需要的时候再读入内存，提高访问速度。
 
-## Overview
+## 简介
 
-`Arrow Cache` use key-value to cache data like any other cache library. Any data stored in `Arrow Cache` will be put into memory immediately.But the amount of data you put in is proportional to the amount of memory you use, `Arrow Cache` will create a timer to mark-clean at regular interval for keep hot data in memory.The marked data will be persist in disk and remove it in memory. `Arrow Cache` will quest this data in memory first when access it next time, if not found, Worker will create a IO request to look for it from the disk, and if found it, this data will be read in memory and initialize.
+`Arrow Cache` 和许多缓存库一样，通过 `Key-Value` 来缓存数据，任何存入 `Arrow Cache` 的数据都会被第一时间放入内存。当放入的东西越来越多，内存会逐渐膨胀，`Arrow Cache` 会启动一个定时器来每隔一段时间做一次标记清除，这种做法会使得内存里都是热数据，进而控制内存。这些被标记的数据并不会马上从内存里被清除，而是持久化到硬盘，下次再用到这个数据的时候会先从内存里寻找，如果没有找到，会发起一起 IO 从硬盘上寻找，如果发现会将它读入内存并且初始化。
 
-## The Life-Circle of Cache
+## 缓存的生命周期
 
-Each data store in `Cache store` has a `isActive` tag and `lifeCount` tag.
+每个存入 `Cache Store` 的数据都会有一个 `isActive` 标记和一个 `lifeCount` 标记。
 
 `isActive`
 
-Data is active when it already in memory, in this case, the `isActive` of this data is `TRUE`. The `isActive` of this data will go from `TRUE` to `FALSE` if it is written to disk, in this case, this data is not active anymore.
+当数据存在于内存中时，证明它是活跃的，这时候该数据的 `isActive` 是 `TRUE`，如果它被写入了磁盘，这时候变为 `FALSE` 代表它是不活跃的。
 
 `lifeCount`
 
-LifeCount is core of mark-clean mechanism, `Arrow Cache` will check the lifeCount for each data in Cache Store is 0 (default is 2) at regular interval(default is 10min and can be change it by setting `clearDuration` option). `Arrow Cache` will mark this data as `imminentDead` to indicate that it can be cleared when the `lifeCount` of this data is 0, then `Arrow Cache` will persisted all data with `imminentDead` tag to disk.
+用来帮助 `Arrow Cache` 的标记清除机制，每隔一段时间（默认是 10min，可以通过设置 `clearDuration` 来更改）会检查当前容器中的数据的 `lifeCount` 是否为 0（初始化是 2），当 `lifeCount` 为 0 时，会将这个数据标记为 `imminentDead` 表示为可以被清除的，然后会将所有标记为 `imminentDead` 的数据持久化到磁盘。
 
 ## Usage
 
@@ -68,19 +68,19 @@ cache.setItem("name", "Jon");
 ArrowCache(Options)
 ```
 
-You can pass a options when create instance of `ArrowCache`. The available properties are as follows:
+你可以在实例化 `ArrowCache` 的时候传递一个 Options，可用属性如下：
 
 `isPermanentMemory` `[Boolean]`
 
-Mark cache as "Permanent Memory". If the `isPermanentMemory` is true, `Arrow Cache` will persist the data in disk when you invoke `setItem` every time. And read it into memory when refresh the page next time. As a caller, you will feel that it's always in memory.
+标记是否为“常驻内存”，如果开启此项，`Arrow Cache` 会在你每次 setItem 的时候都持久化到硬盘，下一次刷新页面的时候将它读到内存，调用者会感受到它一直存在于内存中。
 
 `clearDuration` `[Number]`
 
-Set the cleaning circle. `Arrow Cache` will clear data which lifeCount is 0 at regular interval.
+设置清理周期，`Arrow Cache` 每隔一段时间会清理掉生命计数为 0 的缓存项。
 
-## Use Default Value
+## 使用默认值
 
-To avoid making redundant non-null assertion, We provide default values for individual method, for example:
+为避免做一些冗余的非空判断，我们为个别方法提供了默认值，例如:
 
 ```typescript
 import { ArrowCache } from "arrow-cache";
@@ -113,9 +113,9 @@ const doSomething = async () => {
 };
 ```
 
-## Side Effect Of Updates
+## 更新的副作用
 
-`Arrow Cache` provide some methods to update the content of cache, for example, `setItem` and `updateContent`. We say `setItem` has side effect and `updateContent` has not side effect. `setItem` will create a new item in Cache Store when content of key does not exist. But `updateContent` will return false and is not automatically created a new item in the Cache Store. The other difference is `setItem` will mark this data as `active` and read in memory when the data is already written in disk and mark as `cold data`, but `updateContent` does not change the state of data whether the data is in memory or on the disk.
+`Arrow Cache` 提供了一些更新缓存项的方法，`setItem` 和 `updateContent`。我们称 `setItem` 是有副作用的，而 `updateContent` 是没有副作用的，`setItem` 在 `key` 对应的项不存在的时候会自动创建一个新的，而 `updateContent` 则会返回 false 并且不会自动创建。另一个区别是，当目标缓存项已经被写在硬盘并且被标记为 cold Data 时，使用 `setItem` 会使该缓存项被标记为 `active` 并且读入内存，而 `updateContent` 不论缓存项在内存还是硬盘都不会改变状态。
 
 ```typescript
 ////////////////////////// SIDE EFFECT /////////////////////////
@@ -143,13 +143,13 @@ setTimeout(async () => {
 }, 2100);
 ```
 
-## Control Circle-Life of Data
+## 控制缓存项的生命周期
 
-Mastering life-circle of cache item can better control performance and current situation of the Cache.
+掌控缓存项的生命周期能更好的控制缓存的性能和当前情况。
 
 ![life-circle](https://raw.githubusercontent.com/wizardoc/arrow-cache/master/doc/life-circle.png)
 
-We provide three APIs to help you control life-circle of cache item.
+我们提供了三个 API 来帮助你控制缓存项的生命周期.
 
 ```typescript
 moveToNextStream(key: string): Promise<boolean>
@@ -169,31 +169,31 @@ markAsStatic(key: string): Promise<boolean>
 
 `markAsStatic` 会让对应的缓存项从内存写到硬盘。如果 key 对应的缓存项不存在，则会返回 false。
 
-## Keys
+## keys
 
-We provide a series methods that easily get all keys of the cache store.
+我们提供了一组 keys 的方法，可以轻松拿到所在空间的所有的 keys。
 
 ```typescript
 activeKeys(): Promise<string[]>
 ```
 
-`activeKeys` return all keys of data in the cache, and also means that all cache item in memory is active.
+`activeKeys` 将内存中所有的缓存项的 keys 返回出来。也意味着内存中所有的缓存项都是活跃的。
 
 ```typescript
 staticKeys(): Promise<string[]>
 ```
 
-`staticKeys` return all keys of data on the disk, and also means that all cache item on the disk is not active.
+`staticKeys` 将硬盘中所有的缓存项的 keys 返回出来。也意味着硬盘中所有的缓存项都是不活跃的。
 
 ```typescript
 keys(): Promise<string[]>
 ```
 
-`keys` return all keys of cache whether the data is in memory or on the disk.
+`keys` 方法返回所有的 keys（包含内存和硬盘）
 
 ## Debug
 
-Sometimes, we need to know situation of cache in memory, therefore we can print snapshot of cache by invoke `snapshot` method.
+有时候，需要准确的知道内存中的缓存的情况。可以使用 `snapshot` 方法打印当前缓存的状况
 
 ```typescript
 import { ArrowCache } from "arrow-cache";
@@ -205,13 +205,13 @@ const cache = new ArrowCache();
 })();
 ```
 
-`snapshot` method return snapshot of cache at current point in time. The `snapshot` method will return a new object that is a shallow-copy of memory.
+`snapshot` 返回当前时间点缓存的快照，它是对内存的一层浅拷贝
 
 ## Examples
 
-We have some examples under the [Examples](packages/example), you can start the example by `npx parcel index.html`
+一些例子在 [Examples](packages/example) 下，通过 `npx parcel index.html` 即可启动
 
-### permanent Counter
+### 持久化计数
 
 [Counter](packages/example/permanent-counter/main.tsx)
 
@@ -253,7 +253,7 @@ const Counter = () => {
 render(<Counter />, document.querySelector("#root"));
 ```
 
-### Side Effect Update
+### 副作用更新
 
 [Side Effect Update](packages/example/side-effect-update/main.tsx)
 
