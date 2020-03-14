@@ -115,7 +115,7 @@ const doSomething = async () => {
 
 ## Side Effect Of Updates
 
-`Arrow Cache` provide some methods to update the content of cache, for example, `setItem` and `updateContent`. We say `setItem` has side effect and `updateContent` has not side effect. `setItem` will create a new item in Cache Store when content of key does not exist. But `updateContent` will return false and is not automatically created a new item in the Cache Store. The other difference is `setItem` will mark this data as `active` and read in memory when the data is already written in disk and mark as `cold data`, but `updateContent` does not change the state of data whether the data is in memory or on the disk.
+`Arrow Cache` provide some methods to update the content of cache, for example, `setItem` and `updateContent`. We say `setItem` has side effect and `updateContent` has not side effect. `setItem` will create a new item in Cache Store when content of key does not exist. But `updateContent` will return false and is not automatically created a new item in the Cache Store. The other difference is `setItem` will mark this data as `active` and read in memory when the data is already written in disk and mark as `hot data`, but `updateContent` does not change the state of data whether the data is in memory or on the disk.
 
 ```typescript
 ////////////////////////// SIDE EFFECT /////////////////////////
