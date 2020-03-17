@@ -1,6 +1,6 @@
-import { objectMap, objectFilter, omit } from "../utils";
+import { objectMap, objectFilter, omit } from "../../shared";
 import { IceHouse, ColdDataItem, ParsedAllColdData } from "../db";
-import { ParsedCacheOptions } from "../main";
+import { ParsedCacheOptions } from "../../client/main";
 
 interface ICache {
   addItem(key: string, data: string): boolean;
@@ -203,8 +203,8 @@ export class Cache implements ICache {
 
   async snapshot(): Promise<Snapshot<true>> {
     return {
-      memory: {...this.store},
-      disk: {...(await this.iceHouse.findAll())}
+      memory: { ...this.store },
+      disk: { ...(await this.iceHouse.findAll()) }
     };
   }
 

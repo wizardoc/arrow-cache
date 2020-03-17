@@ -1,6 +1,6 @@
-import StoreWorker from "./workers/store.worker.ts";
-import { KeysTypeData, KeysType, CacheData, CacheKey } from "./dtos";
-import { Snapshot } from "./cache/cache";
+import StoreWorker from "../server/store.worker.ts";
+import { KeysTypeData, KeysType, CacheData, CacheKey } from "../shared";
+import { Snapshot } from "../server";
 import { ClientChannel } from "@arrow-cache/channel";
 
 export interface ParsedCacheItemOptions {

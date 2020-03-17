@@ -1,6 +1,6 @@
-import { Cache } from "../cache/cache";
-import { CacheData, KeysTypeData, KeysType, CacheKey } from "../dtos";
-import { ParsedCacheOptions } from "../main";
+import { Cache } from "./cache";
+import { CacheData, KeysTypeData, KeysType, CacheKey } from "../shared";
+import { ParsedCacheOptions } from "../client/main";
 import { ServerChannel, Res } from "@arrow-cache/channel";
 
 let cache: Cache;

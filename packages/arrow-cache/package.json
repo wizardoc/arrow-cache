@@ -8,12 +8,10 @@
   ],
   "scripts": {
     "compile": "rimraf ./dist && tsc",
-    "build": "webpack --mode=development"
+    "build": "webpack --mode=production"
   },
-  "browserslist": [
-    "last 1 Chrome versions"
-  ],
   "devDependencies": {
+    "@types/node": "^13.9.1",
     "awesome-typescript-loader": "^5.2.1",
     "html-webpack-plugin": "^3.2.0",
     "typescript": "^3.7.3",

@@ -5,6 +5,7 @@
     "rootDir": ".",
     "outDir": "dist",
     "jsx": "react",
+    "types": ["react", "react-dom"],
     "lib": ["DOM"],
     "resolveJsonModule": true,
     "esModuleInterop": true,

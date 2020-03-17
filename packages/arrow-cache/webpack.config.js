@@ -1,8 +1,9 @@
 const Path = require("path");
 
 module.exports = {
-  entry: "./src/main.ts",
+  entry: "./src/client/main.ts",
   mode: "production",
+  devtool: "source-map",
   output: {
     path: Path.resolve("./dist"),
     filename: "main.js",
