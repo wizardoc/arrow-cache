@@ -2,10 +2,10 @@ const Path = require("path");
 const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
-  entry: "./src/client/main.ts",
+  entry: "./src/index.ts",
   output: {
     path: Path.join(__dirname, "./dist"),
-    filename: "main.js",
+    filename: "index.js",
     globalObject: "this",
     library: "ArrowCache",
     publicPath: "",
