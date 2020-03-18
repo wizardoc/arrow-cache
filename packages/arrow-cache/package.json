@@ -8,19 +8,20 @@
   ],
   "scripts": {
     "compile": "rimraf ./dist && tsc",
-    "build": "webpack --mode=production"
+    "build": "rimraf ./dist && webpack --mode=production"
   },
   "devDependencies": {
     "@types/node": "^13.9.1",
     "awesome-typescript-loader": "^5.2.1",
+    "compression-webpack-plugin": "^3.1.0",
     "html-webpack-plugin": "^3.2.0",
     "typescript": "^3.7.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^3.9.0",
+    "worker-loader": "^2.0.0"
   },
   "dependencies": {
-    "@arrow-cache/channel": "^1.0.0",
-    "worker-loader": "^2.0.0"
+    "@arrow-cache/channel": "^1.0.0"
   }
 }
