@@ -100,6 +100,15 @@ export class ArrowCache {
   }
 
   /**
+   * set a listener when read all data into memory
+   */
+  async onInit(cb: () => void) {
+    await this.initPromise;
+
+    cb();
+  }
+
+  /**
    * get all keys of cache block including disk
    */
   activeKeys(): Promise<string[]> {
