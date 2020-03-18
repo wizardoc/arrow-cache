@@ -143,6 +143,20 @@ setTimeout(async () => {
 }, 2100);
 ```
 
+## 何时读入内存
+
+Arrow Cache 会在构造函数调用的时候通过 `Worker` 将硬盘上的数据读入内存，这一过程为 Arrow Cache 的初始化，你可以通过传递一个回调在它初始化完成后做一些事情。
+
+```typescript
+import { ArrowCache } from "arrow-cache";
+
+const cache = new ArrowCache();
+
+cache.onInit(() => {
+  // do something...
+});
+```
+
 ## 控制缓存项的生命周期
 
 掌控缓存项的生命周期能更好的控制缓存的性能和当前情况。
@@ -200,7 +214,7 @@ import { ArrowCache } from "arrow-cache";
 
 const cache = new ArrowCache();
 
-(() => {
+(async () => {
   console.info(await cache.snapshot()); // {memory: {}, disk: {}}
 })();
 ```

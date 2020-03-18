@@ -143,6 +143,20 @@ setTimeout(async () => {
 }, 2100);
 ```
 
+## Read data into memory from Disk
+
+Arrow Cache will read data into memory from disk by Worker Thread when create instance, This procedure initializes Arrow Cache.You can pass a callback to `onInit` if you want to do something after initializes Arrow Cache.
+
+```typescript
+import { ArrowCache } from "arrow-cache";
+
+const cache = new ArrowCache();
+
+cache.onInit(() => {
+  // do something...
+});
+```
+
 ## Control Circle-Life of Data
 
 Mastering life-circle of cache item can better control performance and current situation of the Cache.
@@ -200,7 +214,7 @@ import { ArrowCache } from "arrow-cache";
 
 const cache = new ArrowCache();
 
-(() => {
+(async () => {
   console.info(await cache.snapshot()); // {memory: {}, disk: {}}
 })();
 ```
