@@ -4,6 +4,7 @@
     "target": "ES6",
     "rootDir": "src",
     "outDir": "dist",
+    "types": ["node"],
     "lib": ["ESNext", "WebWorker"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
